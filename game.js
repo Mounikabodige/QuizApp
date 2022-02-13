@@ -17,7 +17,6 @@ fetch("https://opentdb.com/api.php?amount=10&category=27&difficulty=medium&type=
         return res.json();
     })
     .then(loadQuestions => {
-        console.log(loadQuestions.results);
         questions = loadQuestions.results.map( quest => {
             const formatedQuest = {
                 question : quest.question
