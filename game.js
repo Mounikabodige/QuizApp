@@ -8,37 +8,42 @@ let currQuestion = {};
 let score = 0;
 let questionCounter = 0;
 
-let questions = [
-    {
-        question : "Inside which HTML element do we put JavaScript??",
-        choice1: "<script>",
-        choice2: "<javascript>",
-        choice3: "<js>",
-        choice4: "<scripting>",
-        answer : 1
-    },
-    {
-        question : "What is the correct syntax for refering to external sript??",
-        choice1: "<script href='file.js'>",
-        choice2: "<script name='file.js'>",
-        choice3: "<js name='file.js'>",
-        choice4: "<scripting = 'file.js'>",
-        answer:3
-    },
-    {
-        question : "How do you write 'Hello World' in alert box??",
-        choice1: "msgBox('Hello World')",
-        choice2: "alertBox('Hello World')",
-        choice3: "msg('Hello World')",
-        choice4: "alert('Hello World')",
-        answer:4
-    }
-];
+let questions = [];
+
+fetch("https://opentdb.com/api.php?amount=10&category=27&difficulty=medium&type=multiple")
+    .then(res => {
+        return res.json();
+    })
+    .then(loadQuestions => {
+        console.log(loadQuestions.results);
+        questions = loadQuestions.results.map( quest => {
+            const formatedQuest = {
+                question : quest.question
+            };
+
+            const answers = [...quest.incorrect_answers];
+            formatedQuest.answer = Math.floor(Math.random() * 4) +1;
+            answers.splice(
+                formatedQuest.answer - 1, 
+                0,
+                quest.correct_answer
+            );
+
+            answers.forEach( (choice, index) => {
+                formatedQuest['choice'+ (index +1)] = choice;
+            });
+            return formatedQuest;
+        });
+
+        // questions = loadQuestions;
+        startGame();
+    }).catch(err => {
+        console.log(err);
+    });
 
 //Constants
-
 const CORRECT_BONUS = 10;
-const MAX_QUESTIONS = 3;
+const MAX_QUESTIONS = 5;
 
 startGame = () => {
     questionCounter = 0 ;
@@ -49,7 +54,7 @@ startGame = () => {
 
 
 getNewQuestion = () => {
-    if(availibleQuestions.length == 0 || questionCounter > MAX_QUESTIONS){
+    if(availibleQuestions.length == 0 || questionCounter >= MAX_QUESTIONS){
         localStorage.setItem("mostRecentScore", score);
         //go to the end page.
         return window.location.assign("end.html");
@@ -102,4 +107,3 @@ incrementScore = num => {
     score += num;
     scoreText.innerText = score;
 }
-startGame();
