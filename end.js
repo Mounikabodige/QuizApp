@@ -5,7 +5,7 @@ const mostRecentScore = localStorage.getItem('mostRecentScore');
 finalScore.innerText = mostRecentScore;
 
 username.addEventListener( 'keyup', () =>{
-    saveScore.disabled = username.value;
+    saveScore.disabled = !username.value;
 });
 
 saveHighScore = e => {
